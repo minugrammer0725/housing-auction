@@ -1,5 +1,10 @@
 import React, {useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom';
+
+import {getAuth, createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
+import {doc, setDoc, serverTimestamp} from 'firebase/firestore';
+import {db} from '../firebase.config';
+
 import {ReactComponent as ArrowRightIcon} from '../assets/svg/keyboardArrowRightIcon.svg';
 import visibilityIcon from '../assets/svg/visibilityIcon.svg'
 
@@ -21,6 +26,34 @@ const SignUp = () => {
     }) )
   }
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // get the auth value
+      const auth = getAuth();
+      // registering the user, which returns a promise.
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      // updating the display name
+      updateProfile(auth.currentUser, {
+        displayName: name
+      });
+
+      const formDataCopy = {...formData};
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      await setDoc(doc(db, 'users', user.uid), formDataCopy)
+
+      // redirect
+      navigate('/');
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <>
       <div className='pageContainer'>
@@ -30,7 +63,7 @@ const SignUp = () => {
           </p>
         </header>
         <main>
-          <form>
+          <form onSubmit={onSubmit}>
             <input type="text" className="nameInput" placeholder='Name' id='name' value={name} onChange={onChange} />  
             <input type="email" className="emailInput" placeholder='Email' id='email' value={email} onChange={onChange} />
             <div className="passwordInputDiv">
