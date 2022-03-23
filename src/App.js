@@ -1,5 +1,9 @@
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
+// do 'npm i react-toastify' first
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Navbar from './components/Navbar';
 import Explore from './pages/Explore';
 import Offers from './pages/Offers';
@@ -24,6 +28,8 @@ function App() {
         <Navbar />
 
       </Router>
+
+      <ToastContainer />
       
     </>
   );
