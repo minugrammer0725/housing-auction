@@ -4,6 +4,9 @@ import {updateDoc, doc} from 'firebase/firestore';
 import { useNavigate, Link} from 'react-router-dom';
 import {db} from '../firebase.config';
 
+import arrowRight from '../assets/svg/keyboardArrowRightIcon.svg';
+import homeIcon from '../assets/svg/homeIcon.svg';
+
 // import toastify
 import {toast} from 'react-toastify';
 
@@ -80,6 +83,14 @@ const Profile = () => {
             disabled={!changeDetails} value={email} onChange={onChange} />
         </form>
       </div>
+      <Link to='/create-listing' className='createListing'>
+        <img src={homeIcon} alt='home' />
+        <p>Sell or Rent your home.</p>
+        <img src={arrowRight} alt='arrowRight' />
+        
+
+      </Link>
+
     </main>
   </div>
 }
