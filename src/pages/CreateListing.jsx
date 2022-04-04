@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {getAuth, onAuthStateChanged, reauthenticateWithCredential} from 'firebase/auth';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {addDoc, collection, serverTimestamp} from 'firebase/firestore';
+
 import {db} from '../firebase.config';
 // install uuid first via npm
 import {v4 as uuidv4} from 'uuid';
@@ -143,9 +145,31 @@ const CreateListing = () => {
       return
     })
 
-    console.log(imgUrls);
+    // create listing object and upload to firebase! (form data + image)
+    const formDataCopy = {
+      ...formData,
+      imgUrls,
+      geolocation,
+      timestamp: serverTimestamp()
+    }
+
+    // Clean up and Add data.
+    delete formDataCopy.images
+    delete formDataCopy.address
+    if (location != '') {
+      formDataCopy.location = location;
+    }
+    if (!formDataCopy.offer) {
+      delete formDataCopy.discountedPrice
+    }
+
+    const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
 
     setLoading(false);
+
+    toast.success('Listing Saved!');
+    
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`)
 
   }
 
@@ -153,7 +177,7 @@ const CreateListing = () => {
     let boolean = null; 
 
     if (e.target.value === 'true') { 
-      boolean = true;
+      boolean = true; 
     } else if  (e.target.value === 'false') { 
       boolean = false;
     }
