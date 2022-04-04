@@ -154,11 +154,9 @@ const CreateListing = () => {
     }
 
     // Clean up and Add data.
+    formDataCopy.location = address;
     delete formDataCopy.images
     delete formDataCopy.address
-    if (location != '') {
-      formDataCopy.location = location;
-    }
     if (!formDataCopy.offer) {
       delete formDataCopy.discountedPrice
     }
@@ -168,7 +166,7 @@ const CreateListing = () => {
     setLoading(false);
 
     toast.success('Listing Saved!');
-    
+
     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
 
   }
